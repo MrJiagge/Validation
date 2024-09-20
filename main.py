@@ -34,13 +34,7 @@ def validate_password(password):
         return True
     
 def validate_email(email):
-    dot_com_part = email[-4]
-    at_symbol_index = 0
-    index = 0
-
-    for index in email:
-      if email[index] == "@":
-          pass
+    pass
 
 def validate_phone_number(phone_number):
     if (len(phone_number) < 11) or not(phone_number.isdigit()):
