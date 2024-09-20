@@ -52,7 +52,22 @@ def validate_credit_card_number(credit_card_number):
     pass
 
 def validate_date_of_birth(date_of_birth):
-    pass
+    date_of_birth = str(date_of_birth)
+    first_part = date_of_birth[:4]
+    second_part = date_of_birth[5:7]
+    third_part = date_of_birth[7:]
+
+    if not(first_part.isdigit()):
+        return False
+    if not(second_part.isdigit()) or (int(second_part) < 1) or (int(second_part) > 12):
+        return False
+    if not(second_part.isdigit()) or (int(second_part) < 1) or (int(second_part) > 31):
+        return False
+    if (date_of_birth[4] != "-") or (date_of_birth[7] != "-"):
+        return False
+    
+    return True
+
 
 def main():
 
@@ -90,6 +105,16 @@ def main():
             player_details["age"] = age
         else:
             print("Age must be a number between 18 and 100.")
+
+    
+    # check if date of birth is valid
+    while not valid_date_of_birth:
+        date_of_birth = input("Enter your date of birth: ")
+        valid_date_of_birth = validate_date_of_birth(date_of_birth)
+        if valid_date_of_birth:
+            player_details["date_of_brith"] = date_of_birth
+        else:
+            print("Must be in the format: YYYY-MM-DD.")
 
 
 main()
