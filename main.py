@@ -112,7 +112,7 @@ def main():
         date_of_birth = input("Enter your date of birth: ")
         valid_date_of_birth = validate_date_of_birth(date_of_birth)
         if valid_date_of_birth:
-            player_details["date_of_brith"] = date_of_birth
+            player_details["date_of_birth"] = date_of_birth
         else:
             print("Must be in the format: YYYY-MM-DD.")
 
