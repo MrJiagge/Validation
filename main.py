@@ -1,3 +1,7 @@
+import re
+from datetime import datetime
+from error_messages import ERROR  # Import the ERROR class with constants
+
 player_details = {
     "username": str,
     "password": str,
@@ -5,18 +9,13 @@ player_details = {
     "phone_number": int,
     "age": int,
     "credit_card_number": str,
-    "date_of_brith": str
+    "date_of_birth": str
 }
 
-#test = player_details["age"]
-#test = "test"
-#print(test)
-
 def validate_username(username):
-    if (len(username) < 5) or not(username.isalnum()) :
+    if (len(username) < 5) or not(username.isalnum()):
         return False
-    else:
-        return True
+    return True
 
 def validate_password(password):
     uppercase_letters = 0
@@ -30,44 +29,59 @@ def validate_password(password):
 
     if (len(password) < 8) or (lowercase_letters < 1) or (uppercase_letters < 1) or (digits < 1):
         return False
-    else:
-        return True
+    return True
     
 def validate_email(email):
-    pass
+    # Email format
+    email_pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    if re.match(email_pattern, email):
+        return True
+    return False
 
 def validate_phone_number(phone_number):
     if (len(phone_number) < 11) or not(phone_number.isdigit()):
         return False
-    else:
-        return True
+    return True
 
 def validate_age(age):
     if (age < 18) or (age > 100):
         return False
-    else:
-        return True
+    return True
 
 def validate_credit_card_number(credit_card_number):
+    # TODO:
     pass
 
-def validate_date_of_birth(date_of_birth):
-    date_of_birth = str(date_of_birth)
-    first_part = date_of_birth[:4]
-    second_part = date_of_birth[5:7]
-    third_part = date_of_birth[7:]
+def calculate_age_from_date_of_birth(date_of_birth):
+    today = datetime.today()
+    birth_date = datetime.strptime(date_of_birth, "%Y-%m-%d")
+    age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+    return age
 
-    if not(first_part.isdigit()):
+def validate_date_of_birth(date_of_birth, age):
+    date_pattern = r'^\d{4}-\d{2}-\d{2}$'
+    
+    # Check if the format is correct
+    if not re.match(date_pattern, date_of_birth):
         return False
-    if not(second_part.isdigit()) or (int(second_part) < 1) or (int(second_part) > 12):
-        return False
-    if not(second_part.isdigit()) or (int(second_part) < 1) or (int(second_part) > 31):
-        return False
-    if (date_of_birth[4] != "-") or (date_of_birth[7] != "-"):
+    
+    try:
+        # Try and convert string to object
+        date_obj = datetime.strptime(date_of_birth, "%Y-%m-%d")
+        
+        # Check if year is valid
+        if date_obj.year < 1900 or date_obj.year > 2023:
+            return False
+        
+        calculated_age = calculate_age_from_date_of_birth(date_of_birth)
+        if calculated_age != age:
+            return False
+        
+    except ValueError:
+        # If the date is invalid (e.g., Feb 30 or wrong leap year), return False
         return False
     
     return True
-
 
 def main():
 
@@ -86,7 +100,7 @@ def main():
         if valid_username:
             player_details["username"] = username
         else:
-            print("Username should be at least 5 characters long and only contain alphanumeric characters.")
+            print(ERROR.INVALID_USERNAME)
     
     # check if password is valid
     while not valid_password:
@@ -95,26 +109,28 @@ def main():
         if valid_password:
             player_details["password"] = password
         else:
-            print("Password should be at least 8 characters, with 1 uppercase, 1 lowercase and 1 digit.")
+            print(ERROR.INVALID_PASSWORD)
     
-    # check if age is valid
-    while not valid_age:
-        age = int(input("Enter your age: "))
-        valid_age = validate_age(age)
-        if valid_age:
-            player_details["age"] = age
+    # check if email is valid
+    while not valid_email:
+        email = input("Enter your email: ")
+        valid_email = validate_email(email)
+        if valid_email:
+            player_details["email"] = email
         else:
-            print("Age must be a number between 18 and 100.")
-
+            print(ERROR.INVALID_EMAIL)
     
     # check if date of birth is valid
     while not valid_date_of_birth:
-        date_of_birth = input("Enter your date of birth: ")
-        valid_date_of_birth = validate_date_of_birth(date_of_birth)
+        date_of_birth = input("Enter your date of birth (YYYY-MM-DD): ")
+        age = int(input("Enter your age: "))
+        if (age < 18) or (age > 100): print(ERROR.INVALID_AGE)
+        valid_date_of_birth = validate_date_of_birth(date_of_birth, age)
         if valid_date_of_birth:
-            player_details["date_of_brith"] = date_of_birth
+            player_details["date_of_birth"] = date_of_birth
+            player_details["age"] = age
         else:
-            print("Must be in the format: YYYY-MM-DD.")
+            print(ERROR.INVALID_DATE_OF_BIRTH)
 
 
 main()
