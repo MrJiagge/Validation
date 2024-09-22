@@ -127,8 +127,7 @@ def main():
         if (age < 18) or (age > 100): print(ERROR.INVALID_AGE)
         valid_date_of_birth = validate_date_of_birth(date_of_birth, age)
         if valid_date_of_birth:
-            player_details["date_of_birth"] = date_of_birth
-            player_details["age"] = age
+            player_details["date_of_brith"] = date_of_birth
         else:
             print(ERROR.INVALID_DATE_OF_BIRTH)
 
